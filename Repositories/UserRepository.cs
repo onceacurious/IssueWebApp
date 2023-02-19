@@ -26,9 +26,10 @@ namespace IssueWebApp.Repositories
          _configuration = configuration;
       }
 
-      public async Task<User> Register(UserLoginDto dto)
+      public async Task<User> Register(UserRegisterDto dto)
       {
          var username = dto.Username.Trim();
+         var division = await _context.Divisions.SingleOrDefaultAsync(d => d.DivisionId == dto.DivisionId);
          var exist = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
          if (exist is not null && (username.Length <= 3 || username.ToLower() == "username" || exist.Username == username))
          {
@@ -36,8 +37,10 @@ namespace IssueWebApp.Repositories
          }
          CreatePasswordHash(dto.Password, out byte[] passwordHash, out byte[] passwordSalt);
          User user = new();
+         user.Username = username;
          user.PasswordHash = passwordHash;
          user.PasswordSalt = passwordSalt;
+         user.Division = division is null ? throw new AggregateException("division not found") : division;
 
          var result = await _context.Users.AddAsync(user);
          await _context.SaveChangesAsync();
@@ -59,6 +62,32 @@ namespace IssueWebApp.Repositories
             return userToken;
          }
          return null;
+      }
+
+      public async Task<User> UpdateUser(UserDto user, string username)
+      {
+         var _user = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
+         if (_user != null)
+         {
+            var division = await _context.Divisions.SingleOrDefaultAsync(d => d.DivisionId == _user.DivisionId);
+            if (division is not null)
+            {
+               _user.Division = division;
+               _user.Firstname = user.Firstname;
+               _user.Lastname = user.Lastname;
+               _user.Role = user.Role;
+               await _context.SaveChangesAsync();
+               return _user;
+            }
+            throw new ArgumentException("Division not found");
+         }
+         return null;
+      }
+
+      public async Task<IEnumerable<User>> GetUsers()
+      {
+         var results = await _context.Users.ToListAsync();
+         return results;
       }
 
       private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
@@ -83,11 +112,12 @@ namespace IssueWebApp.Repositories
       {
          List<Claim> claims = new List<Claim>
          {
-            new Claim(ClaimTypes.Name, user.Username)
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Role, user.Role),
          };
 
          var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt:Key").Value));
-         var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+         var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
          var token = new JwtSecurityToken(
             claims: claims,
             expires: DateTime.Now.AddDays(1),

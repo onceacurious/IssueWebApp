@@ -78,17 +78,12 @@ namespace IssueWebApp.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Firstname")
-                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
                     b.Property<string>("Lastname")
-                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("text");
 
                     b.Property<byte[]>("PasswordHash")
                         .HasColumnType("bytea");
@@ -97,7 +92,6 @@ namespace IssueWebApp.Migrations
                         .HasColumnType("bytea");
 
                     b.Property<string>("Role")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Username")

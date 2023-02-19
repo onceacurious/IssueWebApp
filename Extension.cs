@@ -1,6 +1,8 @@
 ﻿using IssueWebApp.Dtos.Division;
 using IssueWebApp.Dtos.Issue;
+using IssueWebApp.Dtos.User;
 using IssueWebApp.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace IssueWebApp
 {
@@ -25,6 +27,21 @@ namespace IssueWebApp
             Status = obj.Status,
             Title = obj.Title,
             DivisionId = obj.DivisionId,
+         };
+      }
+
+      public static UserDto AsUserDto(this User obj)
+      {
+         return new UserDto
+         {
+            UserId = obj.UserId,
+            Username = obj.Username,
+            Firstname = obj.Firstname,
+            Lastname = obj.Lastname,
+            Role = obj.Role,
+            DivisionId = obj.DivisionId,
+            PasswordHash = obj.PasswordHash,
+            PasswordSalt = obj.PasswordSalt,
          };
       }
    }

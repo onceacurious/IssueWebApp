@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IssueWebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230219190155_AddUserModelUpdate1")]
-    partial class AddUserModelUpdate1
+    [Migration("20230219212706_InitDb")]
+    partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -80,17 +80,12 @@ namespace IssueWebApp.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Firstname")
-                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
                     b.Property<string>("Lastname")
-                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("text");
 
                     b.Property<byte[]>("PasswordHash")
                         .HasColumnType("bytea");
@@ -99,7 +94,6 @@ namespace IssueWebApp.Migrations
                         .HasColumnType("bytea");
 
                     b.Property<string>("Role")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Username")

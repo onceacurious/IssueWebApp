@@ -15,7 +15,7 @@ namespace IssueWebApp.Models
       [JsonIgnore]
       public ICollection<Issue> Issue { get; set; }
 
-      //[JsonIgnore]
-      //public ICollection<User> Users { get; set; }
+      [JsonIgnore]
+      public ICollection<User> Users { get; set; }
    }
 }

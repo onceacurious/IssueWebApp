@@ -4,21 +4,27 @@ using IssueWebApp.Repositories.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Linq;
+using System.Security.Claims;
 using System.Text;
 
 namespace IssueWebApp
 {
    public class Startup
    {
-      public Startup(IConfiguration configuration)
+      private readonly ApplicationDbContext _context;
+
+      public Startup(IConfiguration configuration, ApplicationDbContext context)
       {
          Configuration = configuration;
+         _context = context;
       }
 
       public IConfiguration Configuration { get; }
@@ -31,14 +37,13 @@ namespace IssueWebApp
             .AddJwtBearer(options =>
             options.TokenValidationParameters = new()
             {
-               ValidateIssuer = true,
-               ValidateAudience = true,
-               ValidateLifetime = true,
+               //ValidateLifetime = true,
+               ValidateIssuer = false,
+               ValidateAudience = false,
                ValidateIssuerSigningKey = true,
-               ValidIssuer = Configuration["Jwt:Issuer"],
-               ValidAudience = Configuration["Jwt:Audience"],
-               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("Jwt:Key").Value))
             });
+
          services.AddMvc();
 
          //Custom Services
@@ -75,6 +80,8 @@ namespace IssueWebApp
          app.UseHttpsRedirection();
 
          app.UseRouting();
+
+         //Always above authorization
          app.UseAuthentication();
 
          app.UseAuthorization();
