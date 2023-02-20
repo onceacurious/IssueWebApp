@@ -12,6 +12,9 @@ namespace IssueWebApp.Data
       public DbSet<Division> Divisions { get; set; }
       public DbSet<Issue> Issues { get; set; }
       public DbSet<User> Users { get; set; }
+      public DbSet<UserBio> Bio { get; set; }
       public DbSet<RefreshToken> RefreshTokens { get; set; }
+      public DbSet<Answer> Answers { get; set; }
+      public DbSet<Comment> Comments { get; set; }
    }
 }

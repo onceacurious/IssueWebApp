@@ -2,7 +2,6 @@
 using IssueWebApp.Dtos.User;
 using IssueWebApp.Models;
 using IssueWebApp.Repositories.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -27,10 +26,9 @@ namespace IssueWebApp.Repositories
          _configuration = configuration;
       }
 
-      public async Task<User> Register(UserRegisterDto dto)
+      public async Task<User> Register(UserAuthDto dto)
       {
          var username = dto.Username.Trim();
-         var division = await _context.Divisions.SingleOrDefaultAsync(d => d.DivisionId == dto.DivisionId);
          var exist = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
          if (exist is not null && (username.Length <= 3 || username.ToLower() == "username" || exist.Username == username))
          {
@@ -38,12 +36,22 @@ namespace IssueWebApp.Repositories
          }
          CreatePasswordHash(dto.Password, out byte[] passwordHash, out byte[] passwordSalt);
          User user = new();
+         RefreshToken token = new();
+
+         var refreshToken = GenerateRefreshtoken();
+
+         token.RefreshTokenId = Guid.NewGuid();
+         token.Token = refreshToken.Token;
+         token.Expires = refreshToken.Expires;
+         token.Created = refreshToken.Created;
+
          user.Username = username;
          user.PasswordHash = passwordHash;
          user.PasswordSalt = passwordSalt;
-         user.Division = division is null ? throw new AggregateException("division not found") : division;
+         user.RefreshToken = token;
 
          var result = await _context.Users.AddAsync(user);
+         await _context.RefreshTokens.AddAsync(token);
          await _context.SaveChangesAsync();
          return result.Entity;
       }
@@ -64,23 +72,35 @@ namespace IssueWebApp.Repositories
          return null;
       }
 
-      public async Task<User> UpdateUser(UserDto user, string username)
+      public async Task<User> GetUser(string username)
       {
-         var _user = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
-         if (_user != null)
-         {
-            var division = await _context.Divisions.SingleOrDefaultAsync(d => d.DivisionId == _user.DivisionId);
-            if (division is not null)
-            {
-               _user.Division = division;
-               _user.Firstname = user.Firstname;
-               _user.Lastname = user.Lastname;
-               _user.Role = user.Role;
-               await _context.SaveChangesAsync();
-               return _user;
-            }
-            throw new ArgumentException("Division not found");
-         }
+         var result = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
+         return result;
+      }
+
+      public async Task<User> GetUser(int userId)
+      {
+         var result = await _context.Users.SingleOrDefaultAsync(u => u.UserId == userId);
+         return result;
+      }
+
+      public async Task<User> UpdateUser(UserBio user, string username)
+      {
+         //var _user = await _context.Bio.SingleOrDefaultAsync(u => u.Username == username);
+         //if (_user != null)
+         //{
+         //   var division = await _context.Divisions.SingleOrDefaultAsync(d => d.DivisionId == _user.DivisionId);
+         //   if (division is not null)
+         //   {
+         //      _user.Division = division;
+         //      _user.Firstname = user.Firstname;
+         //      _user.Lastname = user.Lastname;
+         //      _user.Role = user.Role;
+         //      await _context.SaveChangesAsync();
+         //      return _user;
+         //   }
+         //   throw new ArgumentException("Division not found");
+         //}
          return null;
       }
 
@@ -88,6 +108,24 @@ namespace IssueWebApp.Repositories
       {
          var results = await _context.Users.ToListAsync();
          return results;
+      }
+
+      public RefreshToken GenerateRefreshtoken()
+      {
+         byte[] randomBytes = new byte[64];
+         using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+         {
+            rng.GetBytes(randomBytes);
+         }
+         var token = Convert.ToBase64String(randomBytes);
+         var refreshToken = new RefreshToken
+         {
+            Token = token,
+            Expires = DateTime.Now.AddDays(7),
+            Created = DateTime.Now
+         };
+
+         return refreshToken;
       }
 
       private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

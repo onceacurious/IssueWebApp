@@ -1,7 +1,4 @@
-﻿using IssueWebApp.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace IssueWebApp.Dtos.Issue
 {
@@ -11,12 +8,16 @@ namespace IssueWebApp.Dtos.Issue
       public string Title { get; set; }
 
       [Required]
-      [Column(TypeName = "text")]
-      public Flag OverdueFlag { get; set; } = Flag.No;
+      [MaxLength(1000), MinLength(5)]
+      public string Description { get; set; }
 
       [Required]
-      [Column(TypeName = "text")]
-      public Status Status { get; set; } = Status.Open;
+      [RegularExpression("yes|no")]
+      public string OverdueFlag { get; set; }
+
+      [Required]
+      [RegularExpression("open|close")]
+      public string Status { get; set; }
 
       [Required]
       public int DivisionId { get; set; }

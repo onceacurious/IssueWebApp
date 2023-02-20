@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IssueWebApp.Models
 {
@@ -15,31 +15,44 @@ namespace IssueWebApp.Models
    {
       Yes,
       No,
-      OnProgress,
    }
 
    public class Issue
    {
       [Key]
-      public int Id { get; set; }
+      public int IssueId { get; set; }
 
       [Required]
+      [MaxLength(150), MinLength(5)]
       public string Title { get; set; }
 
       [Required]
-      [Column(TypeName = "text")]
-      public Flag OverdueFlag { get; set; }
+      [MaxLength(1000), MinLength(5)]
+      public string Description { get; set; }
 
       [Required]
-      [Column(TypeName = "text")]
-      public Status Status { get; set; }
+      [RegularExpression("yes|no")]
+      public string OverdueFlag { get; set; }
 
       [Required]
-      public DateTimeOffset RaisedDate { get; set; } = DateTimeOffset.UtcNow;
+      [RegularExpression("open|close")]
+      public string Status { get; set; }
+
+      [Required]
+      public DateTime RaisedDate { get; set; } = DateTime.Now;
+
+      public DateTime DateClosed { get; set; }
+      public DateTimeOffset DateUpdated { get; set; }
+
+      public bool IsAttended { get; set; } = false;
+
+      public ICollection<Comment> Comments { get; set; }
+
+      public ICollection<Answer> Answers { get; set; }
 
       public int DivisionId { get; set; }
 
-      //public string DivisionName { get; set; }
+      [JsonIgnore]
       public Division Division { get; set; }
    }
 }

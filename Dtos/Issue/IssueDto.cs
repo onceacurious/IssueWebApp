@@ -1,29 +1,32 @@
-﻿using IssueWebApp.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IssueWebApp.Dtos.Issue
 {
    public class IssueDto
    {
       [Key]
-      public int Id { get; set; }
+      public int IssueId { get; set; }
 
       [Required]
       public string Title { get; set; }
 
       [Required]
-      [Column(TypeName = "text")]
-      public Flag OverdueFlag { get; set; } = Flag.No;
+      [MaxLength(1000), MinLength(5)]
+      public string Description { get; set; }
 
       [Required]
-      [Column(TypeName = "text")]
-      public Status Status { get; set; } = Status.Open;
+      [RegularExpression("yes|no")]
+      public string OverdueFlag { get; set; }
 
       [Required]
-      public DateTimeOffset RaisedDate { get; set; }
+      [RegularExpression("open|close")]
+      public string Status { get; set; }
+
+      public DateTime RaisedDate { get; set; } = DateTime.Now;
+      public DateTimeOffset DateUpdated { get; set; } = DateTimeOffset.Now;
+      public DateTime DateClosed { get; set; }
 
       public int DivisionId { get; set; }
    }

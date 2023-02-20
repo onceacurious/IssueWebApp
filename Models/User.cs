@@ -17,21 +17,10 @@ namespace IssueWebApp.Models
       public byte[] PasswordHash { get; set; }
       public byte[] PasswordSalt { get; set; }
 
-      [MaxLength(150)]
-      public string Firstname { get; set; }
-
-      [MaxLength(150)]
-      public string Lastname { get; set; }
-
-      public string Role { get; set; }
-
-      public int DivisionId { get; set; }
-
-      public Division Division { get; set; }
+      [RegularExpression("administrator|user|staff|officer")]
+      public string Role { get; set; } = "user";
 
       public Guid RefreshTokenId { get; set; }
-      public string RefreshToken { get; set; }
-      public DateTime TokenCreated { get; set; }
-      public DateTime TokenExpires { get; set; }
+      public RefreshToken RefreshToken { get; set; }
    }
 }

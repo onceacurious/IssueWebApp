@@ -1,5 +1,4 @@
-﻿using IssueWebApp.Data;
-using IssueWebApp.Dtos.User;
+﻿using IssueWebApp.Dtos.User;
 using IssueWebApp.Models;
 using IssueWebApp.Repositories.Interface;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -17,16 +17,14 @@ namespace IssueWebApp.Controllers
    public class UserController : ControllerBase
    {
       private readonly IUserRepository _userRepository;
-      private readonly ApplicationDbContext _context;
 
-      public UserController(IUserRepository userRepository, ApplicationDbContext context)
+      public UserController(IUserRepository userRepository)
       {
          _userRepository = userRepository;
-         _context = context;
       }
 
       [HttpPost("user/register"), AllowAnonymous]
-      public async Task<ActionResult<UserRegisterDto>> Register([FromBody] UserRegisterDto dto)
+      public async Task<ActionResult<UserAuthDto>> Register([FromBody] UserAuthDto dto)
       {
          try
          {
@@ -35,7 +33,7 @@ namespace IssueWebApp.Controllers
             {
                return NotFound("Division not found");
             }
-            return Ok(result.AsUserDto());
+            return Ok(result);
          }
          catch (Exception ex)
          {
@@ -53,7 +51,7 @@ namespace IssueWebApp.Controllers
             {
                return NotFound("User not found");
             }
-            var refreshToken = GenerateRefreshtoken();
+            var refreshToken = _userRepository.GenerateRefreshtoken();
             SetRefreshToken(refreshToken);
             return Ok(result);
          }
@@ -66,24 +64,40 @@ namespace IssueWebApp.Controllers
       [HttpPut("user/{username}")]
       public async Task<ActionResult<UserDto>> UpdateUser(UserDto dto, string username)
       {
-         var result = await _userRepository.UpdateUser(dto, username);
-         if (result == null)
-         {
-            return NotFound("User not found");
-         }
+         //var result = await _userRepository.UpdateUser(dto, username);
+         //if (result == null)
+         //{
+         //   return NotFound("User not found");
+         //}
 
-         return Ok(result.AsUserDto());
+         //return Ok(result.AsUserDto());
+         return null;
       }
 
-      [HttpGet("users"), Authorize(Roles = "Administrator")]
+      [HttpGet("users")]
+      //[AllowAnonymous]
+      [Authorize(Roles = "administrator")]
       public async Task<ActionResult<UserDto>> GetUsers()
       {
-         var results = (await _userRepository.GetUsers()).Select(u => u.AsUserDto());
+         var results = (await _userRepository.GetUsers()).Select(u => u.AsUserAuthDto());
          return Ok(results);
       }
 
+      [HttpGet("user/{username}")]
+      public async Task<ActionResult<UserDto>> GetUser(string username)
+      {
+         //string name = User.Identity.Name;
+         string nameClaim = User.FindFirst(ClaimTypes.Name)?.Value;
+         if (username != nameClaim)
+         {
+            return StatusCode(StatusCodes.Status403Forbidden);
+         }
+         var result = await _userRepository.GetUser(username);
+         return Ok(result);
+      }
+
       [NonAction]
-      private async void SetRefreshToken(RefreshToken refresh)
+      private void SetRefreshToken(RefreshToken refresh)
       {
          User user = new();
 
@@ -94,11 +108,11 @@ namespace IssueWebApp.Controllers
          };
 
          Response.Cookies.Append("refreshToken", refresh.Token, cookieOptions);
-         user.RefreshToken = refresh.Token;
-         user.TokenCreated = refresh.Created;
-         user.TokenExpires = refresh.Expires;
-         await _context.Users.AddAsync(user);
-         await _context.SaveChangesAsync();
+         //user.RefreshToken = refresh.Token;
+         //user.TokenCreated = refresh.Created;
+         //user.TokenExpires = refresh.Expires;
+         //await _context.Users.AddAsync(user);
+         //await _context.SaveChangesAsync();
       }
 
       [NonAction]

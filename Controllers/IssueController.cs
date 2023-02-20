@@ -23,22 +23,29 @@ namespace IssueWebApp.Controllers
       }
 
       [HttpGet("issues")]
-      public async Task<ActionResult<IssueDto>> GetIssues()
+      public async Task<ActionResult<Issue>> GetIssues()
       {
          var results = (await _issueRepository.GetIssues())
             .Select(i => i.AsIssueDto());
          return Ok(results);
       }
 
-      [HttpGet("issue/{id:int}")]
-      public async Task<ActionResult<IssueDto>> GetIssue(int id)
+      [HttpGet("issue/{issueId:int}")]
+      public async Task<ActionResult<IssueDto>> GetIssue(int issueId)
       {
-         var result = await _issueRepository.GetIssue(id);
+         var result = await _issueRepository.GetIssue(issueId);
          if (result is null)
          {
             return NotFound("Issue not found");
          }
          return Ok(result);
+      }
+
+      [HttpGet("issue/{issueId:int}/answer")]
+      public async Task<ActionResult<Issue>> GetIssueComments(int issueId)
+      {
+         var results = await _issueRepository.GetIssueAnswers(issueId);
+         return Ok(results);
       }
 
       [HttpGet("issues/division/{divisionId:int}")]
@@ -52,7 +59,7 @@ namespace IssueWebApp.Controllers
       [HttpGet("issues/open")]
       public async Task<ActionResult<IssueDto>> GetOpenIssues()
       {
-         var result = (await _issueRepository.GetIssueByStatus(0)).Select(i => i.AsIssueDto());
+         var result = await _issueRepository.GetIssueByStatus("open");
          return Ok(result);
       }
 
@@ -60,7 +67,7 @@ namespace IssueWebApp.Controllers
       [HttpGet("issues/closed")]
       public async Task<ActionResult<IssueDto>> GetClosedIssued()
       {
-         var result = (await _issueRepository.GetIssueByStatus(1)).Select(i => i.AsIssueDto());
+         var result = await _issueRepository.GetIssueByStatus("closed");
          return Ok(result);
       }
 
@@ -68,7 +75,7 @@ namespace IssueWebApp.Controllers
       [HttpGet("issues/overdue")]
       public async Task<ActionResult<IssueDto>> GetOverdueIssues()
       {
-         var result = (await _issueRepository.GetIssueByFlag(0)).Select(i => i.AsIssueDto());
+         var result = await _issueRepository.GetIssueByFlag("open");
          return Ok(result);
       }
 
@@ -76,17 +83,17 @@ namespace IssueWebApp.Controllers
       public async Task<ActionResult<AddIssueDto>> CreateIssue([FromBody] AddIssueDto dto)
       {
          var division = await _issueRepository.GetDivision(dto.DivisionId);
-
          Issue issue = new()
          {
             Title = dto.Title,
+            Description = dto.Description,
             OverdueFlag = dto.OverdueFlag,
             Status = dto.Status,
-            RaisedDate = DateTimeOffset.UtcNow,
+            RaisedDate = DateTime.Now,
             Division = division
          };
          await _issueRepository.CreateIssue(issue);
-         return CreatedAtAction(nameof(GetIssue), new { id = issue.Id }, issue.AsIssueDto());
+         return CreatedAtAction(nameof(GetIssue), new { id = issue.IssueId }, issue.AsIssueDto());
       }
 
       [HttpDelete("issue/{id:int}")]

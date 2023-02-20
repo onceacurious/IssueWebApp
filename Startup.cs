@@ -10,11 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Linq;
-using System.Security.Claims;
-
-//using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace IssueWebApp
 {
@@ -42,16 +40,6 @@ namespace IssueWebApp
                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("Jwt:Key").Value))
             });
 
-         services.AddMvc();
-
-         services.AddAuthorization(
-            options =>
-            {
-               options.AddPolicy("CanEditUser", policy =>
-
-                  policy.RequireClaim("UpdateUser"));
-            });
-
          //Custom Services
          services.AddCors(c =>
          c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
@@ -62,8 +50,14 @@ namespace IssueWebApp
          services.AddScoped<IDivisionRepository, DivisionRepository>();
          services.AddScoped<IIssueRepository, IssueRepository>();
          services.AddScoped<IUserRepository, UserRepository>();
+         services.AddScoped<IAnswerRepository, AnswerRepository>();
 
-         services.AddControllers();
+         services.AddMvc();
+         services.AddControllers().AddJsonOptions(options =>
+            {
+               options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+               options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            });
          services.AddSwaggerGen(c =>
          {
             c.SwaggerDoc("v1", new OpenApiInfo { Title = "IssueWebApp", Version = "v1" });

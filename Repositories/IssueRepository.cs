@@ -4,6 +4,7 @@ using IssueWebApp.Models;
 using IssueWebApp.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,7 +49,7 @@ namespace IssueWebApp.Repositories
 
       public Task<Issue> GetIssue(int id)
       {
-         var result = _context.Issues.SingleOrDefaultAsync(i => i.Id == id);
+         var result = _context.Issues.SingleOrDefaultAsync(i => i.IssueId == id);
          return result;
       }
 
@@ -59,17 +60,17 @@ namespace IssueWebApp.Repositories
          return results;
       }
 
-      public async Task<IEnumerable<Issue>> GetIssueByFlag(int flag)
+      public async Task<IEnumerable<Issue>> GetIssueByFlag(string flag)
       {
          var result = await _context.Issues
-            .Where(i => ((int)i.OverdueFlag) == flag).ToListAsync();
+            .Where(i => i.OverdueFlag == flag).ToListAsync();
          return result;
       }
 
-      public async Task<IEnumerable<Issue>> GetIssueByStatus(int status)
+      public async Task<IEnumerable<Issue>> GetIssueByStatus(string status)
       {
          var results = await _context.Issues
-            .Where(i => ((int)i.Status) == status).ToListAsync();
+            .Where(i => i.Status == status).ToListAsync();
          return results;
       }
 
@@ -77,6 +78,12 @@ namespace IssueWebApp.Repositories
       {
          var result = await _context.Issues.ToListAsync();
          return result;
+      }
+
+      public async Task<IEnumerable<Issue>> GetIssueAnswers(int issueId)
+      {
+         var results = await _context.Issues.Include(a => a.Answers).Where(i => i.IssueId == issueId).ToListAsync();
+         return results;
       }
 
       public async Task<Issue> UpdateIssue(int id, UpdateIssueDto dto)
@@ -87,6 +94,9 @@ namespace IssueWebApp.Repositories
             result.Title = dto.Title;
             result.Status = dto.Status;
             result.OverdueFlag = dto.OverdueFlag;
+            result.DateUpdated = DateTimeOffset.Now;
+            result.Division = await _context.Divisions.SingleOrDefaultAsync(d => d.DivisionId == dto.DivisionId);
+            result.DateClosed = dto.Status == "closed" ? DateTime.Now : DateTime.Now.AddDays(7);
             await _context.SaveChangesAsync();
             return result;
          }

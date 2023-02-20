@@ -21,8 +21,10 @@ namespace IssueWebApp.Repositories.Interface
 
       Task<Division> GetDivision(int divisionId);
 
-      Task<IEnumerable<Issue>> GetIssueByStatus(int status);
+      Task<IEnumerable<Issue>> GetIssueByStatus(string status);
 
-      Task<IEnumerable<Issue>> GetIssueByFlag(int flag);
+      Task<IEnumerable<Issue>> GetIssueByFlag(string flag);
+
+      Task<IEnumerable<Issue>> GetIssueAnswers(int issueId);
    }
 }
