@@ -11,7 +11,7 @@ namespace IssueWebApp.Repositories.Interface
    {
       Task<User> Register(UserRegisterDto dto);
 
-      Task<UserTokenDto> Login(UserLoginDto login);
+      Task<string> Login(UserLoginDto login);
 
       Task<User> UpdateUser(UserDto user, string username);
 

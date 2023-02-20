@@ -2,6 +2,7 @@
 using IssueWebApp.Dtos.User;
 using IssueWebApp.Models;
 using IssueWebApp.Repositories.Interface;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -47,7 +48,7 @@ namespace IssueWebApp.Repositories
          return result.Entity;
       }
 
-      public async Task<UserTokenDto> Login(UserLoginDto login)
+      public async Task<string> Login(UserLoginDto login)
       {
          var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == login.Username);
          if (user != null)
@@ -57,9 +58,8 @@ namespace IssueWebApp.Repositories
                throw new ArgumentException("Incorrect password");
             }
             string token = CreateToken(user);
-            UserTokenDto userToken = new();
-            userToken.Token = token;
-            return userToken;
+
+            return token;
          }
          return null;
       }

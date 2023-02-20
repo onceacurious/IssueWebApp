@@ -4,7 +4,6 @@ using IssueWebApp.Repositories.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,18 +12,17 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Linq;
 using System.Security.Claims;
+
+//using System.Security.Claims;
 using System.Text;
 
 namespace IssueWebApp
 {
    public class Startup
    {
-      private readonly ApplicationDbContext _context;
-
-      public Startup(IConfiguration configuration, ApplicationDbContext context)
+      public Startup(IConfiguration configuration)
       {
          Configuration = configuration;
-         _context = context;
       }
 
       public IConfiguration Configuration { get; }
@@ -45,6 +43,14 @@ namespace IssueWebApp
             });
 
          services.AddMvc();
+
+         services.AddAuthorization(
+            options =>
+            {
+               options.AddPolicy("CanEditUser", policy =>
+
+                  policy.RequireClaim("UpdateUser"));
+            });
 
          //Custom Services
          services.AddCors(c =>

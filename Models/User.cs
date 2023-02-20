@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace IssueWebApp.Models
@@ -27,5 +28,10 @@ namespace IssueWebApp.Models
       public int DivisionId { get; set; }
 
       public Division Division { get; set; }
+
+      public Guid RefreshTokenId { get; set; }
+      public string RefreshToken { get; set; }
+      public DateTime TokenCreated { get; set; }
+      public DateTime TokenExpires { get; set; }
    }
 }
