@@ -1,4 +1,5 @@
-﻿using IssueWebApp.Models;
+﻿using IssueWebApp.Dtos.Answer;
+using IssueWebApp.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,5 +14,7 @@ namespace IssueWebApp.Repositories.Interface
       Task<Answer> PostAnswer(Answer answer);
 
       Task<Answer> GetAnswer(int answerId);
+
+      Task<Answer> UpdatedAnswer(int answerId, UpdateAnswerDto dto);
    }
 }

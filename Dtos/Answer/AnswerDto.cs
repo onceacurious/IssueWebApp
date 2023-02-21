@@ -16,5 +16,7 @@ namespace IssueWebApp.Dtos.Answer
       public int UserId { get; set; }
       public DateTime DateCreated { get; set; } = DateTime.Now;
       public DateTimeOffset DateUpdated { get; set; }
+      public bool IsSolution { get; set; } = false;
+      public bool IsDeleted { get; set; } = false;
    }
 }

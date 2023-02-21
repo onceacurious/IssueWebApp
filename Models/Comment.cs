@@ -14,6 +14,7 @@ namespace IssueWebApp.Models
       public string Description { get; set; }
 
       public bool IsAccepted { get; set; } = false;
+      public bool IsDeleted { get; set; } = false;
 
       public DateTime DateCreated { get; set; } = DateTime.Now;
       public DateTimeOffset DateUpdated { get; set; } = DateTimeOffset.Now;

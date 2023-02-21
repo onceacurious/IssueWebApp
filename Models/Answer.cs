@@ -15,6 +15,7 @@ namespace IssueWebApp.Models
       public string Description { get; set; }
 
       public bool IsSolution { get; set; } = false;
+      public bool IsDeleted { get; set; } = false;
 
       public int IssueId { get; set; }
 

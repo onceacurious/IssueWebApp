@@ -1,8 +1,11 @@
 ﻿using IssueWebApp.Dtos.Answer;
 using IssueWebApp.Models;
 using IssueWebApp.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace IssueWebApp.Controllers
@@ -23,6 +26,7 @@ namespace IssueWebApp.Controllers
       }
 
       [HttpGet("answer/{answerId:int}")]
+      [Authorize]
       public async Task<ActionResult<AnswerDto>> GetAnswer(int answerId)
       {
          var result = await _answerRepository.GetAnswer(answerId);
@@ -44,6 +48,31 @@ namespace IssueWebApp.Controllers
 
          await _answerRepository.PostAnswer(answer);
          return CreatedAtAction(nameof(GetAnswer), new { answerId = answer.AnswerId }, answer.AsAnswerDto());
+      }
+
+      [HttpPut("answer/{answerId:int}")]
+      [Authorize]
+      public async Task<ActionResult<UpdateAnswerDto>> UpdateAnswer(int answerId, UpdateAnswerDto dto)
+      {
+         try
+         {
+            var result = await _answerRepository.UpdatedAnswer(answerId, dto);
+            if (result is null)
+            {
+               return NotFound("Answer not found");
+            }
+            var name = User.FindFirst(ClaimTypes.Name)?.Value;
+            var owner = await _userRepository.GetUser(result.UserId);
+            if (name != owner.Username)
+            {
+               return StatusCode(StatusCodes.Status403Forbidden);
+            }
+            return Ok(result.AsAnswerDto());
+         }
+         catch (Exception ex)
+         {
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+         }
       }
    }
 }

@@ -1,10 +1,13 @@
 ﻿using IssueWebApp.Data;
+using IssueWebApp.Dtos.Answer;
 using IssueWebApp.Models;
 using IssueWebApp.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace IssueWebApp.Repositories
@@ -43,6 +46,26 @@ namespace IssueWebApp.Repositories
       {
          var result = await _context.Answers.SingleOrDefaultAsync(a => a.AnswerId == answerId);
          return result;
+      }
+
+      public async Task<Answer> UpdatedAnswer(int answerId, UpdateAnswerDto dto)
+      {
+         var issue = await _context.Issues.SingleOrDefaultAsync(i => i.IssueId == dto.IssueId);
+         var user = await _context.Users.SingleOrDefaultAsync(u => u.UserId == dto.UserId);
+         var result = await _context.Answers.SingleOrDefaultAsync(a => a.AnswerId == answerId);
+         if (result is not null)
+         {
+            result.Description = dto.Description;
+            result.IsDeleted = dto.IsDeleted;
+            result.IsSolution = dto.IsSolution;
+            result.Author = user;
+            result.Issue = issue;
+            result.DateUpdated = DateTimeOffset.Now;
+
+            await _context.SaveChangesAsync();
+            return result;
+         }
+         return null;
       }
    }
 }

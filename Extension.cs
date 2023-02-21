@@ -66,6 +66,8 @@ namespace IssueWebApp
             IssueId = obj.IssueId,
             DateCreated = obj.DateCreated,
             DateUpdated = obj.DateUpdated,
+            IsDeleted = obj.IsDeleted,
+            IsSolution = obj.IsSolution,
          };
       }
    }
