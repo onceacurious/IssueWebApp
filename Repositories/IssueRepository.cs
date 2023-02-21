@@ -43,13 +43,17 @@ namespace IssueWebApp.Repositories
 
       public async Task<Division> GetDivision(int divisionId)
       {
-         var division = await _context.Divisions.SingleOrDefaultAsync(d => d.DivisionId == divisionId);
+         var division = await _context.Divisions
+            .SingleOrDefaultAsync(d => d.DivisionId == divisionId);
          return division;
       }
 
       public Task<Issue> GetIssue(int id)
       {
-         var result = _context.Issues.SingleOrDefaultAsync(i => i.IssueId == id);
+         var result = _context.Issues
+            .Include(a => a.Answers)
+            .Include(c => c.Comments)
+            .SingleOrDefaultAsync(i => i.IssueId == id);
          return result;
       }
 
@@ -82,7 +86,10 @@ namespace IssueWebApp.Repositories
 
       public async Task<IEnumerable<Issue>> GetIssueAnswers(int issueId)
       {
-         var results = await _context.Issues.Include(a => a.Answers).Where(i => i.IssueId == issueId).ToListAsync();
+         var results = await _context.Issues
+            .Include(a => a.Answers)
+            .Where(i => i.IssueId == issueId)
+            .ToListAsync();
          return results;
       }
 
@@ -95,7 +102,8 @@ namespace IssueWebApp.Repositories
             result.Status = dto.Status;
             result.OverdueFlag = dto.OverdueFlag;
             result.DateUpdated = DateTimeOffset.Now;
-            result.Division = await _context.Divisions.SingleOrDefaultAsync(d => d.DivisionId == dto.DivisionId);
+            result.Division = await _context.Divisions
+               .SingleOrDefaultAsync(d => d.DivisionId == dto.DivisionId);
             result.DateClosed = dto.Status == "closed" ? DateTime.Now : DateTime.Now.AddDays(7);
             await _context.SaveChangesAsync();
             return result;

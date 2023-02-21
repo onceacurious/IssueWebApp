@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IssueWebApp.Models
 {
@@ -17,15 +18,16 @@ namespace IssueWebApp.Models
       public bool IsSolution { get; set; } = false;
       public bool IsDeleted { get; set; } = false;
 
+      [ForeignKey("Issue")]
       public int IssueId { get; set; }
 
-      [JsonIgnore]
-      public Issue Issue { get; set; }
+      //public Issue Issue { get; set; }
 
+      [ForeignKey("User")]
       public int UserId { get; set; }
 
       [JsonIgnore]
-      public User Author { get; set; }
+      public virtual User Author { get; set; }
 
       public DateTime DateCreated { get; set; } = DateTime.Now;
       public DateTimeOffset DateUpdated { get; set; }

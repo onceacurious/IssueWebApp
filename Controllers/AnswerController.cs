@@ -26,7 +26,6 @@ namespace IssueWebApp.Controllers
       }
 
       [HttpGet("answer/{answerId:int}")]
-      [Authorize]
       public async Task<ActionResult<AnswerDto>> GetAnswer(int answerId)
       {
          var result = await _answerRepository.GetAnswer(answerId);
@@ -41,7 +40,7 @@ namespace IssueWebApp.Controllers
          Answer answer = new()
          {
             Description = dto.Description,
-            Issue = issue,
+            //Issue = issue,
             Author = user,
             DateCreated = DateTime.Now,
          };

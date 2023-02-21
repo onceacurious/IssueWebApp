@@ -65,7 +65,7 @@ namespace IssueWebApp.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("AnswerId")
+                    b.Property<int?>("AnswerId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("DateCreated")
@@ -85,7 +85,7 @@ namespace IssueWebApp.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("IssueId")
+                    b.Property<int?>("IssueId")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")
@@ -274,15 +274,11 @@ namespace IssueWebApp.Migrations
                 {
                     b.HasOne("IssueWebApp.Models.Answer", "Answer")
                         .WithMany("Comments")
-                        .HasForeignKey("AnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AnswerId");
 
                     b.HasOne("IssueWebApp.Models.Issue", "Issue")
                         .WithMany("Comments")
-                        .HasForeignKey("IssueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IssueId");
 
                     b.HasOne("IssueWebApp.Models.User", "Author")
                         .WithMany()

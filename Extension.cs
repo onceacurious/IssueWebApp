@@ -1,8 +1,13 @@
 ﻿using IssueWebApp.Dtos.Answer;
+using IssueWebApp.Dtos.Comment;
 using IssueWebApp.Dtos.Division;
 using IssueWebApp.Dtos.Issue;
 using IssueWebApp.Dtos.User;
 using IssueWebApp.Models;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace IssueWebApp
 {
@@ -30,6 +35,8 @@ namespace IssueWebApp
             RaisedDate = obj.RaisedDate,
             DateUpdated = obj.DateUpdated,
             DateClosed = obj.DateClosed,
+            IssueAnswers = obj.Answers,
+            IssueComments = obj.Comments,
          };
       }
 
@@ -68,6 +75,24 @@ namespace IssueWebApp
             DateUpdated = obj.DateUpdated,
             IsDeleted = obj.IsDeleted,
             IsSolution = obj.IsSolution,
+            AuthorName = obj.Author.Username,
+            Comments = obj.Comments,
+         };
+      }
+
+      public static CommentDto AsCommentDto(this Comment obj)
+      {
+         return new CommentDto
+         {
+            CommentId = obj.CommentId,
+            Description = obj.Description,
+            IsAccepted = obj.IsAccepted,
+            IsDeleted = obj.IsDeleted,
+            DateCreated = obj.DateCreated,
+            DateUpdated = obj.DateUpdated,
+            UserId = obj.UserId,
+            AnswerId = obj.AnswerId,
+            IssueId = obj.IssueId,
          };
       }
    }

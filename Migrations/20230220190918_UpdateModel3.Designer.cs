@@ -255,13 +255,13 @@ namespace IssueWebApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IssueWebApp.Models.User", "Author")
+                    b.HasOne("IssueWebApp.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Author");
+                    b.Navigation("User");
 
                     b.Navigation("Issue");
                 });
@@ -280,7 +280,7 @@ namespace IssueWebApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IssueWebApp.Models.User", "Author")
+                    b.HasOne("IssueWebApp.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -288,7 +288,7 @@ namespace IssueWebApp.Migrations
 
                     b.Navigation("Answer");
 
-                    b.Navigation("Author");
+                    b.Navigation("User");
 
                     b.Navigation("Issue");
                 });

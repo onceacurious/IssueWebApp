@@ -1,4 +1,7 @@
-﻿using System;
+﻿using IssueWebApp.Models;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace IssueWebApp.Dtos.Answer
@@ -18,5 +21,9 @@ namespace IssueWebApp.Dtos.Answer
       public DateTimeOffset DateUpdated { get; set; }
       public bool IsSolution { get; set; } = false;
       public bool IsDeleted { get; set; } = false;
+
+      public string AuthorName { get; set; }
+
+      public object Comments { get; set; }
    }
 }

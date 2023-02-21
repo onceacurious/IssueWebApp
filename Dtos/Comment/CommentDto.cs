@@ -1,10 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System;
 
-namespace IssueWebApp.Models
+namespace IssueWebApp.Dtos.Comment
 {
-   public class Comment
+   public class CommentDto
    {
       [Key]
       public int CommentId { get; set; }
@@ -20,17 +19,9 @@ namespace IssueWebApp.Models
       public DateTimeOffset DateUpdated { get; set; } = DateTimeOffset.Now;
       public int UserId { get; set; }
 
-      [JsonIgnore]
-      public User Author { get; set; }
-
       public int? AnswerId { get; set; }
-
-      [JsonIgnore]
-      public Answer Answer { get; set; }
 
       public int? IssueId { get; set; }
 
-      [JsonIgnore]
-      public Issue Issue { get; set; }
    }
 }

@@ -29,5 +29,8 @@ namespace IssueWebApp.Dtos.Issue
       public DateTime DateClosed { get; set; }
 
       public int DivisionId { get; set; }
+
+      public object IssueAnswers { get; set; }
+      public object IssueComments { get; set; }
    }
 }

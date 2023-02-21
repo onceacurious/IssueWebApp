@@ -51,6 +51,7 @@ namespace IssueWebApp
          services.AddScoped<IIssueRepository, IssueRepository>();
          services.AddScoped<IUserRepository, UserRepository>();
          services.AddScoped<IAnswerRepository, AnswerRepository>();
+         services.AddScoped<ICommentRepository, CommentRepository>();
 
          services.AddMvc();
          services.AddControllers().AddJsonOptions(options =>

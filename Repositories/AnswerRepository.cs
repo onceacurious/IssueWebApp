@@ -44,7 +44,10 @@ namespace IssueWebApp.Repositories
 
       public async Task<Answer> GetAnswer(int answerId)
       {
-         var result = await _context.Answers.SingleOrDefaultAsync(a => a.AnswerId == answerId);
+         var result = await _context.Answers
+            .Include(u => u.Author)
+            .Include(c => c.Comments)
+            .SingleOrDefaultAsync(a => a.AnswerId == answerId);
          return result;
       }
 
@@ -59,7 +62,7 @@ namespace IssueWebApp.Repositories
             result.IsDeleted = dto.IsDeleted;
             result.IsSolution = dto.IsSolution;
             result.Author = user;
-            result.Issue = issue;
+            //result.Issue = issue;
             result.DateUpdated = DateTimeOffset.Now;
 
             await _context.SaveChangesAsync();

@@ -15,11 +15,13 @@ namespace IssueWebApp.Controllers
    {
       private readonly IIssueRepository _issueRepository;
       private readonly ILogger<IssueController> _logger;
+      private readonly IAnswerRepository _answerRepository;
 
-      public IssueController(IIssueRepository repository, ILogger<IssueController> logger)
+      public IssueController(IIssueRepository repository, ILogger<IssueController> logger, IAnswerRepository answerRepository)
       {
          _logger = logger;
          _issueRepository = repository;
+         _answerRepository = answerRepository;
       }
 
       [HttpGet("issues")]
@@ -31,14 +33,15 @@ namespace IssueWebApp.Controllers
       }
 
       [HttpGet("issue/{issueId:int}")]
-      public async Task<ActionResult<IssueDto>> GetIssue(int issueId)
+      public async Task<ActionResult<Issue>> GetIssue(int issueId)
       {
          var result = await _issueRepository.GetIssue(issueId);
          if (result is null)
          {
             return NotFound("Issue not found");
          }
-         return Ok(result);
+
+         return Ok(result.AsIssueDto());
       }
 
       [HttpGet("issue/{issueId:int}/answer")]
