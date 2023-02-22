@@ -5,6 +5,8 @@ namespace IssueWebApp.Models
    public class UserBio
    {
       [Key]
+      public int UserBioId { get; set; }
+
       public int UserId { get; set; }
 
       public User User { get; set; }
