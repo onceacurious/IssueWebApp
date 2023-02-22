@@ -72,11 +72,11 @@ namespace IssueWebApp
       public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
       {
          //Customer helper
-         using (var scope = app.ApplicationServices.CreateScope())
-         {
-            var serviceProvider = scope.ServiceProvider;
-            DataHelper.ManageDataAsync(serviceProvider).Wait();
-         }
+         //using (var scope = app.ApplicationServices.CreateScope())
+         //{
+         //   var serviceProvider = scope.ServiceProvider;
+         //   DataHelper.ManageDataAsync(serviceProvider).Wait();
+         //}
 
 
          app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());

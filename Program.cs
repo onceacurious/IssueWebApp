@@ -1,13 +1,26 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace IssueWebApp
 {
    public class Program
    {
-      public static void Main(string[] args)
+      public static async void Main(string[] args)
       {
-         CreateHostBuilder(args).Build().Run();
+         var host = CreateHostBuilder(args).Build();
+
+         // Create a scope for dependency injection
+         using (var scope = host.Services.CreateScope())
+         {
+            // Call the method to manage data asynchronously
+            await DataHelper.ManageDataAsync(scope.ServiceProvider);
+         }
+
+         // Run the application
+         await host.RunAsync();
+
+         //CreateHostBuilder(args).Build().Run();
       }
 
       public static IHostBuilder CreateHostBuilder(string[] args) =>
