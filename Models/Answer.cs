@@ -14,14 +14,16 @@ namespace IssueWebApp.Models
       [Required]
       [MaxLength(1000), MinLength(5)]
       public string Description { get; set; }
-
+      [Required]
+      [MinLength(5)]
+      public string RawText { get; set; }
       public bool IsSolution { get; set; } = false;
       public bool IsDeleted { get; set; } = false;
 
       [ForeignKey("Issue")]
       public int IssueId { get; set; }
-
-      //public Issue Issue { get; set; }
+      [JsonIgnore]
+      public Issue Issue { get; set; }
 
       [ForeignKey("User")]
       public int UserId { get; set; }

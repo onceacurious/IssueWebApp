@@ -98,7 +98,9 @@ namespace IssueWebApp.Repositories
          var result = await _context.Issues.FindAsync(id);
          if (result is not null)
          {
-            result.Title = dto.Title;
+            result.Subject = dto.Subject;
+            result.Description = dto.Description;
+            result.RawText = dto.RawText;
             result.Status = dto.Status;
             result.OverdueFlag = dto.OverdueFlag;
             result.DateUpdated = DateTimeOffset.Now;

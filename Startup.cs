@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -28,6 +29,8 @@ namespace IssueWebApp
       // This method gets called by the runtime. Use this method to add services to the container.
       public void ConfigureServices(IServiceCollection services)
       {
+
+
          //JWT
          services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -68,6 +71,14 @@ namespace IssueWebApp
       // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
       public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
       {
+         //Customer helper
+         using (var scope = app.ApplicationServices.CreateScope())
+         {
+            var serviceProvider = scope.ServiceProvider;
+            DataHelper.ManageDataAsync(serviceProvider).Wait();
+         }
+
+
          app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
          app.UseStaticFiles();
 

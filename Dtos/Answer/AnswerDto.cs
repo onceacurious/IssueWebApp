@@ -14,6 +14,9 @@ namespace IssueWebApp.Dtos.Answer
       [Required]
       [MaxLength(1000), MinLength(5)]
       public string Description { get; set; }
+      [Required]
+      [MinLength(5)]
+      public string RawText { get; set; }
 
       public int IssueId { get; set; }
       public int UserId { get; set; }

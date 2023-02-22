@@ -27,10 +27,11 @@ namespace IssueWebApp
          return new IssueDto
          {
             IssueId = obj.IssueId,
+            Subject = obj.Subject,
             Description = obj.Description,
+            RawText = obj.RawText,
             OverdueFlag = obj.OverdueFlag,
             Status = obj.Status,
-            Title = obj.Title,
             DivisionId = obj.DivisionId,
             RaisedDate = obj.RaisedDate,
             DateUpdated = obj.DateUpdated,
@@ -69,6 +70,7 @@ namespace IssueWebApp
          {
             AnswerId = obj.AnswerId,
             Description = obj.Description,
+            RawText = obj.RawText,
             UserId = obj.UserId,
             IssueId = obj.IssueId,
             DateCreated = obj.DateCreated,

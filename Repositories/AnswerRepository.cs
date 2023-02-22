@@ -59,6 +59,7 @@ namespace IssueWebApp.Repositories
          if (result is not null)
          {
             result.Description = dto.Description;
+            result.RawText = dto.RawText;
             result.IsDeleted = dto.IsDeleted;
             result.IsSolution = dto.IsSolution;
             result.Author = user;

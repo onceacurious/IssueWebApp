@@ -108,11 +108,6 @@ namespace IssueWebApp.Controllers
          };
 
          Response.Cookies.Append("refreshToken", refresh.Token, cookieOptions);
-         //user.RefreshToken = refresh.Token;
-         //user.TokenCreated = refresh.Created;
-         //user.TokenExpires = refresh.Expires;
-         //await _context.Users.AddAsync(user);
-         //await _context.SaveChangesAsync();
       }
 
       [NonAction]

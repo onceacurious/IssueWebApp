@@ -88,15 +88,16 @@ namespace IssueWebApp.Controllers
          var division = await _issueRepository.GetDivision(dto.DivisionId);
          Issue issue = new()
          {
-            Title = dto.Title,
+            Subject = dto.Subject,
             Description = dto.Description,
+            RawText = dto.RawText,
             OverdueFlag = dto.OverdueFlag,
             Status = dto.Status,
             RaisedDate = DateTime.Now,
             Division = division
          };
          await _issueRepository.CreateIssue(issue);
-         return CreatedAtAction(nameof(GetIssue), new { id = issue.IssueId }, issue.AsIssueDto());
+         return CreatedAtAction(nameof(GetIssue), new { issueId = issue.IssueId }, issue.AsIssueDto());
       }
 
       [HttpDelete("issue/{id:int}")]

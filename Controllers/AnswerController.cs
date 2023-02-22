@@ -40,7 +40,8 @@ namespace IssueWebApp.Controllers
          Answer answer = new()
          {
             Description = dto.Description,
-            //Issue = issue,
+            RawText = dto.RawText,
+            Issue = issue,
             Author = user,
             DateCreated = DateTime.Now,
          };
@@ -50,7 +51,7 @@ namespace IssueWebApp.Controllers
       }
 
       [HttpPut("answer/{answerId:int}")]
-      [Authorize]
+      //[Authorize]
       public async Task<ActionResult<UpdateAnswerDto>> UpdateAnswer(int answerId, UpdateAnswerDto dto)
       {
          try
