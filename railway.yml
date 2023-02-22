@@ -1,0 +1,9 @@
+name: <IssueWebApp>
+env: dotnet-5.0
+#env_secret: <path to your app secrets file>
+build:
+  steps:
+    - run: dotnet publish -c Release
+start:
+  web: cd bin/Release/net5.0/publish 
+
