@@ -13,22 +13,31 @@ namespace IssueWebApp.Controllers
    public class CommentController : ControllerBase
    {
       private readonly ICommentRepository _commentRepository;
+      private readonly IAnswerRepository _answerRepository;
+      private readonly IIssueRepository _issueRepository;
 
-      public CommentController(ICommentRepository commentRepository)
+      public CommentController(IIssueRepository issueRepository, ICommentRepository commentRepository, IAnswerRepository answerRepository)
       {
          _commentRepository = commentRepository;
+         _answerRepository = answerRepository;
+         _issueRepository = issueRepository;
       }
 
       [HttpPost("comment")]
       public async Task<ActionResult<PostCommentDto>> PostComment([FromBody] PostCommentDto dto)
       {
+         var answer = await _answerRepository.GetAnswer(dto.AnswerId.GetValueOrDefault());
+         var issue = await _issueRepository.GetIssue(dto.IssueId.GetValueOrDefault());
+
          Comment comment = new()
          {
             Description = dto.Description,
             DateCreated = DateTime.Now,
+            Answer = answer,
+            Issue = issue,
             UserId = dto.UserId,
-            AnswerId = dto.AnswerId is null ? null : dto.AnswerId,
-            IssueId = dto.IssueId is null ? null : dto.IssueId,
+            //AnswerId = (int)dto.AnswerId.Value,
+            //IssueId = (int)dto.IssueId.Value
          };
 
          await _commentRepository.PostComment(comment);

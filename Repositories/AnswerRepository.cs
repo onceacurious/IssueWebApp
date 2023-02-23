@@ -48,7 +48,11 @@ namespace IssueWebApp.Repositories
             .Include(u => u.Author)
             .Include(c => c.Comments)
             .SingleOrDefaultAsync(a => a.AnswerId == answerId);
-         return result;
+         if (result is not null)
+         {
+            return result;
+         }
+         throw new ArgumentException("Answer not found");
       }
 
       public async Task<Answer> UpdatedAnswer(int answerId, UpdateAnswerDto dto)

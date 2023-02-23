@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IssueWebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230220181029_UpdateModel1")]
-    partial class UpdateModel1
+    [Migration("20230223075530_UpdateDb")]
+    partial class UpdateDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -39,6 +39,12 @@ namespace IssueWebApp.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSolution")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("IssueId")
                         .HasColumnType("integer");
 
@@ -61,7 +67,7 @@ namespace IssueWebApp.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("AnswerId")
+                    b.Property<int?>("AnswerId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("DateCreated")
@@ -74,6 +80,12 @@ namespace IssueWebApp.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<int?>("IssueId")
                         .HasColumnType("integer");
@@ -249,13 +261,13 @@ namespace IssueWebApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IssueWebApp.Models.User", "User")
+                    b.HasOne("IssueWebApp.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Author");
 
                     b.Navigation("Issue");
                 });
@@ -264,15 +276,13 @@ namespace IssueWebApp.Migrations
                 {
                     b.HasOne("IssueWebApp.Models.Answer", "Answer")
                         .WithMany("Comments")
-                        .HasForeignKey("AnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AnswerId");
 
-                    b.HasOne("IssueWebApp.Models.Issue", null)
+                    b.HasOne("IssueWebApp.Models.Issue", "Issue")
                         .WithMany("Comments")
                         .HasForeignKey("IssueId");
 
-                    b.HasOne("IssueWebApp.Models.User", "User")
+                    b.HasOne("IssueWebApp.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -280,7 +290,9 @@ namespace IssueWebApp.Migrations
 
                     b.Navigation("Answer");
 
-                    b.Navigation("User");
+                    b.Navigation("Author");
+
+                    b.Navigation("Issue");
                 });
 
             modelBuilder.Entity("IssueWebApp.Models.Issue", b =>

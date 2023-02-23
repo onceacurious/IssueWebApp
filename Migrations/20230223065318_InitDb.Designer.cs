@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IssueWebApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230220165841_UpdateModel")]
-    partial class UpdateModel
+    [Migration("20230223065318_InitDb")]
+    partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -38,6 +38,12 @@ namespace IssueWebApp.Migrations
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSolution")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("IssueId")
                         .HasColumnType("integer");
@@ -74,6 +80,12 @@ namespace IssueWebApp.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<int?>("IssueId")
                         .HasColumnType("integer");
@@ -243,40 +255,42 @@ namespace IssueWebApp.Migrations
 
             modelBuilder.Entity("IssueWebApp.Models.Answer", b =>
                 {
-                    b.HasOne("IssueWebApp.Models.Issue", "Issue")
+                    b.HasOne("IssueWebApp.Models.Issue", null)
                         .WithMany("Answers")
                         .HasForeignKey("IssueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("IssueWebApp.Models.User", "User")
+                    b.HasOne("IssueWebApp.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
-
-                    b.Navigation("Issue");
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("IssueWebApp.Models.Comment", b =>
                 {
-                    b.HasOne("IssueWebApp.Models.Answer", null)
+                    b.HasOne("IssueWebApp.Models.Answer", "Answer")
                         .WithMany("Comments")
                         .HasForeignKey("AnswerId");
 
-                    b.HasOne("IssueWebApp.Models.Issue", null)
-                        .WithMany("Cooments")
+                    b.HasOne("IssueWebApp.Models.Issue", "Issue")
+                        .WithMany("Comments")
                         .HasForeignKey("IssueId");
 
-                    b.HasOne("IssueWebApp.Models.User", "User")
+                    b.HasOne("IssueWebApp.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Answer");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Issue");
                 });
 
             modelBuilder.Entity("IssueWebApp.Models.Issue", b =>
@@ -338,7 +352,7 @@ namespace IssueWebApp.Migrations
                 {
                     b.Navigation("Answers");
 
-                    b.Navigation("Cooments");
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

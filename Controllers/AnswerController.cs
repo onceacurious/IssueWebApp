@@ -28,8 +28,15 @@ namespace IssueWebApp.Controllers
       [HttpGet("answer/{answerId:int}")]
       public async Task<ActionResult<AnswerDto>> GetAnswer(int answerId)
       {
-         var result = await _answerRepository.GetAnswer(answerId);
-         return Ok(result.AsAnswerDto());
+         try
+         {
+            var result = await _answerRepository.GetAnswer(answerId);
+            return Ok(result.AsAnswerDto());
+         }
+         catch (Exception ex)
+         {
+            return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+         }
       }
 
       [HttpPost("answer")]
@@ -40,7 +47,7 @@ namespace IssueWebApp.Controllers
          Answer answer = new()
          {
             Description = dto.Description,
-            //Issue = issue,
+            Issue = issue,
             Author = user,
             DateCreated = DateTime.Now,
          };

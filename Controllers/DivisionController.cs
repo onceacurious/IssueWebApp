@@ -55,7 +55,7 @@ namespace IssueWebApp.Controllers
                Name = dto.Name,
             };
             await _divisionRepository.CreateDivision(division);
-            return CreatedAtAction(nameof(GetDivision), new { id = division.DivisionId }, division.AsDivisionDto());
+            return CreatedAtAction(nameof(GetDivision), new { divisionId = division.DivisionId }, division.AsDivisionDto());
          }
          catch (Exception ex)
          {
